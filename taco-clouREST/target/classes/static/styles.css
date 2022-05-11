@@ -1,0 +1,18 @@
+.grid{
+	width:100%;
+	margin: 0 auto;
+	display: flex;
+	flex-wrap:wrap;
+}
+.ingredient-group{
+	width:45%;
+	border: 1px solid #ddd;
+	margin-top: 10px;
+	margin-left: 10px;
+	padding-left: 10px;
+	padding-bottom: 10px;
+}
+label{
+	margin-left: 10px;
+	margin-right: 10px;
+}
