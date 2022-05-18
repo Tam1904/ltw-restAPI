@@ -15,4 +15,7 @@
 label{
 	margin-left: 10px;
 	margin-right: 10px;
+	min-width: 100px;
+	padding: 5px 0;
+	display: inline-block;
 }

@@ -3,23 +3,22 @@ package tacos.web;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-//import java.util.stream.Collectors;
-import javax.validation.Valid;
+
+import javax.servlet.http.HttpSession;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
-import lombok.extern.slf4j.Slf4j;
-import tacos.Taco;
 import tacos.Ingredient;
 import tacos.Ingredient.Type;
+import tacos.Taco;
 
-@Slf4j
 @Controller
 @RequestMapping("/design")
 public class DesignTacoController {
@@ -52,11 +51,21 @@ public class DesignTacoController {
 	}
 
 	@PostMapping
-	public String processDesign(@Valid Taco taco, Errors errors) {
-		if (errors.hasErrors()) {
-			return "design";
+	public String processDesign(HttpSession session, @RequestParam("ingredients") String ingredientIds, @RequestParam("name") String name) {
+		List<Ingredient> ingredients = new ArrayList<Ingredient>();
+		for (String ingredientId : ingredientIds.split(",")) {
+			Ingredient ingredient = rest.getForObject("http://localhost:8080/ingredients/{id}", Ingredient.class,
+					ingredientId);
+			ingredients.add(ingredient);
 		}
-		log.info("Processing design: " + taco);
+		Taco taco = new Taco();
+		taco.setName(name);
+		taco.setIngredients(ingredients);
+		System.out.println(taco);
+		rest.postForObject("http://localhost:8080/design", taco, Taco.class);
+		List<Taco> tacos = new ArrayList<>();
+		tacos.add(taco);
+		session.setAttribute("tacos", tacos);
 		return "redirect:/orders/current";
 	}
 }
